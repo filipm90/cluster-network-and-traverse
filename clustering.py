@@ -4,7 +4,7 @@ import networkx as nx
 import sys, time
 
 """
-                    ****clustering.py*****
+                    *****clustering.py*****
 
 Generation of the network clusters (or components) on the basis of
 pairwise node relationships and assignment of cluster number to each
