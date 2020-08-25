@@ -1,7 +1,11 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*- 
 
+import sys, time
 import pandas as pd
 import networkx as nx
-import sys, time
+
+pd.options.mode.chained_assignment = None #to avoid displaying errors of future obsoleteness in Pandas dataframe
 
 """
                     *****clustering.py*****
@@ -18,29 +22,24 @@ the script can be used for any network representation where nodes and edges
 
 networkx (pip install networkx)
 pandas
-sys
 
                         ***How to Run***
 
-python clustering.py file.dat
+python clustering.py test.dat
 
-where:    clustering.py -> program name
-          file.dat -> node pair file where first two columns represent node instances forming pairwise relationships per row (e.g., node_1, node_2)
+where:    clustering.py -> script name
+          test.dat -> node pair file where first two columns represent node instances forming pairwise relationships per row (e.g., node_1, node_2)
 
 Use file test.dat to run an example clustering!
 
                         ***Output***
 
-file_output.dat -> an updated input file.dat with assigned cluster IDs per each edge row
-file_cluster_info.dat -> basic cluster statistics
-
-
+output.dat -> an updated input file.dat with assigned cluster IDs per each edge row
+cluster_info.dat -> basic cluster statistics
 
 Developed by Filip Miljković
 
 """
-
-pd.options.mode.chained_assignment = None #to avoid displaying errors of future obsoleteness in Pandas dataframe
 
 start = time.time()
 
@@ -48,7 +47,7 @@ file_name = sys.argv[1]
 
 edge_file = pd.read_csv(file_name, sep = "\t")
 
-network_list = list(zip(edge_file[edge_file.columns[0]].tolist(), edge_file[edge_file.columns[1]].tolist()))
+network_list = list(zip(edge_file["CPD_1"].tolist(), edge_file["CPD_2"].tolist()))
 
 g = nx.Graph()
 g.add_edges_from(network_list)
@@ -71,9 +70,9 @@ for pair in network_list:
 
 edge_file["Cluster_ID"] = cluster_list
 
-edge_file.to_csv(sys.argv[1].split(".")[0] + "_output.dat", sep = "\t", index = False)
+edge_file.to_csv("output.dat", sep = "\t", index = False)
 
-print ("Total number of clusters:", len(set(cluster_list)))
+print ("Total number of clusters: {}".format(len(set(cluster_list))))
 
 ###cluster info
 
@@ -85,7 +84,7 @@ n_edge.columns = ["Cluster_ID", "Edges"]
 
 #nodes
 
-n_node = edge_file.groupby("Cluster_ID")[edge_file.columns[0], edge_file.columns[1]].agg(set).reset_index()
+n_node = edge_file.groupby("Cluster_ID")["CPD_1", "CPD_2"].agg(set).reset_index()
 
 n_node["Nodes"] = None
 
@@ -98,8 +97,10 @@ n_node = n_node[["Cluster_ID", "Nodes"]]
 
 cluster_info = n_node.merge(n_edge, on = "Cluster_ID", how = "inner")
 
-cluster_info.to_csv("{}_cluster_info.dat".format(sys.argv[1].split(".")[0]), sep = "\t", index = False)
+cluster_info.to_csv("cluster_info.dat", sep = "\t", index = False)
 
 #time
 
 print("Finished in: {} seconds.".format(round(time.time()-start, 3)))
+
+"""End of the code"""
