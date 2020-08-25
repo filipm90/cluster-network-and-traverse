@@ -187,7 +187,7 @@ for pair_paths in path_set:
 
 print ("Eliminating redundant pathways...")
 
-#New part of the code, eliminating redundant pathways and saving new file on that way
+#New part of the code, eliminating redundant pathways and saving a new file
 
 path_dict = {k: set(v) for k, v in zip(output["Pathway No"], output["Pathway"])} #making dictionary with pathway no as keys and pathway as values
 
